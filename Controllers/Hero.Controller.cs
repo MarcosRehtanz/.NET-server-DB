@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using HeroWorld.Models;
 using Hero.Models;
-using ClassHero.Models;
 
 namespace HeroWorld.HeroController;
 
@@ -10,22 +9,27 @@ public class HeroController
     public static async Task<List<HeroDTO>> GetAll(HeroWorldDB db)
     {
         return await db.Heroes
-            .Select(h => new HeroDTO
-            {
-                Id = h.Id,
-                Name = h.Name,
-                Description = h.Description,
-                Class = new ClassDTO
+                .Select(hero => new HeroDTO
                 {
-                    Id = h.ClassId,
-                    Name = h.Class.Name
-                }
-            })
-            .ToListAsync();
+                    Id = hero.Id,
+                    Name = hero.Name,
+                    Description = hero.Description,
+                    User = new()
+                    {
+                        Id = hero.User.Id,
+                        Name = hero.User.Name
+                    },
+                    Class = new()
+                    {
+                        Id = hero.ClassId,
+                        Name = hero.Class.Name
+                    }
+                })
+                .ToListAsync();
     }
     public static async Task<IResult> Post(HeroWorldDB db, InputHero inputHero)
     {
-        HeroModel hero = (HeroModel)inputHero;
+        HeroModel hero = HeroParse.InputHeroToHeroModel(inputHero);
         await db.Heroes.AddAsync(hero);
         await db.SaveChangesAsync();
         return Results.Created($"/hero/{hero.Id}", hero);
@@ -39,7 +43,7 @@ public class HeroController
                 Id = h.Id,
                 Name = h.Name,
                 Description = h.Description,
-                Class = new ClassDTO
+                Class = new()
                 {
                     Id = h.Class.Id,
                     Name = h.Class.Name
@@ -47,15 +51,15 @@ public class HeroController
             })
             .FirstOrDefaultAsync();
     }
-    public static async Task<IResult> Put(HeroWorldDB db, HeroModel upHero, int id)
+    public static async Task<IResult> Put(HeroWorldDB db, InputHero inputHero, int id)
     {
         HeroModel? hero = await db.Heroes.FindAsync(id);
 
         if (hero is null) return Results.NotFound();
 
-        hero.Name = upHero.Name;
-        hero.Description = upHero.Description;
-        hero.ClassId = upHero.ClassId;
+        hero.Name = inputHero.Name;
+        hero.Description = inputHero.Description;
+        hero.ClassId = inputHero.ClassId;
         await db.SaveChangesAsync();
         return Results.NoContent();
     }

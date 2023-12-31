@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using HeroWorld.Models;
 using ClassHero.Models;
+using Hero.Models;
 
 namespace HeroWorld.ClassHeroController;
 
@@ -12,7 +13,12 @@ public class ClassHeroController
     }
     public static async Task<IResult> Post(HeroWorldDB db, InputClassHero inputClassHero)
     {
-        ClassHeroModel classHero = (ClassHeroModel)inputClassHero;
+        ClassHeroModel classHero = new()
+        {
+            Id = 0,
+            Name = inputClassHero.Name,
+            Heroes = new List<HeroModel>()
+        };
         await db.Classes.AddAsync(classHero);
         var _ = db.SaveChangesAsync();
         return Results.Created($"/hero/class/{classHero.Id}", classHero);

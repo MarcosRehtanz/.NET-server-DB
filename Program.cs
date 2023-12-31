@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using HeroWorld.Models;
 using HeroWorld.HeroController;
 using HeroWorld.ClassHeroController;
+using HeroWorld.UserController;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +22,6 @@ builder.Services.AddSwaggerGen(c =>
 // Connect EF Core with the DataBase
 var connectionString = builder.Configuration.GetConnectionString("HeroWorld") ?? "Data Source = HeroWorld.db";
 builder.Services.AddSqlite<HeroWorldDB>(connectionString);
-// JsonIgnore
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    });
 
 var app = builder.Build();
 // App Swagger
@@ -35,6 +30,12 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "HeroWorld API V1");
 });
+
+app.MapGet("/users", UserController.GetAll);
+app.MapPost("/users", UserController.Post);
+app.MapGet("/users/{id}", UserController.Get);
+app.MapPut("/users/{id}", UserController.Put);
+app.MapDelete("/users/{id}", UserController.Delete);
 
 app.MapGet("/heroes", HeroController.GetAll);
 app.MapPost("/heroes", HeroController.Post);
