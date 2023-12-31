@@ -2,7 +2,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using HeroWorld.Models;
 using HeroWorld.HeroController;
-using HeroWorld.ClassController;
+using HeroWorld.ClassHeroController;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,16 +36,16 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "HeroWorld API V1");
 });
 
-app.MapGet("/hero", HeroController.GetAll);
-app.MapPost("/hero", HeroController.Post);
-app.MapGet("/hero/{id}", HeroController.Get);
-app.MapPut("/hero/{id}", HeroController.Put);
-app.MapDelete("/hero/{id}", HeroController.Delete);
+app.MapGet("/heroes", HeroController.GetAll);
+app.MapPost("/heroes", HeroController.Post);
+app.MapGet("/heroes/{id}", HeroController.Get);
+app.MapPut("/heroes/{id}", HeroController.Put);
+app.MapDelete("/heroes/{id}", HeroController.Delete);
 
-app.MapGet("/heroe/class", ClassController.GetAll);
-app.MapPost("/heroe/class", ClassController.Post);
-app.MapGet("/heroe/class/{id}", ClassController.Get);
-app.MapPut("/heroe/class/{id}", ClassController.Put);
-app.MapDelete("/heroe/class/{id}", ClassController.Delete);
+app.MapGet("/classes", ClassHeroController.GetAll);
+app.MapPost("/classes", ClassHeroController.Post);
+app.MapGet("/classes/{id}", ClassHeroController.Get);
+app.MapPut("/classes/{id}", ClassHeroController.Put);
+app.MapDelete("/classes/{id}", ClassHeroController.Delete);
 
 app.Run();
