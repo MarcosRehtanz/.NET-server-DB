@@ -4,6 +4,7 @@ using HeroWorld.Models;
 using HeroWorld.HeroController;
 using HeroWorld.ClassHeroController;
 using HeroWorld.UserController;
+using CloudinaryDotNet.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,30 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "HeroWorld API V1");
+});
+
+// app.MapGet("/cloudinary", async () =>
+// {
+//     var listResourcesByPrefixParams = new ListResourcesByPrefixParams()
+//     {
+//         Type = "upload"
+//     };
+
+//     var result = await cloudinary.ListResourcesAsync();
+
+//     return result;
+// });
+
+app.MapPost("/cloudinary", async (InputCloudinary inputCloudinary) =>
+{
+    var result = await CloudinaryServices.Upload(inputCloudinary.Image);
+    return result;
+});
+
+app.MapDelete("/cloudinary/{publicId}", async (string publicId) =>
+{
+    var result = await CloudinaryServices.Delete(publicId);
+    return result;
 });
 
 app.MapGet("/users", UserController.GetAll);
